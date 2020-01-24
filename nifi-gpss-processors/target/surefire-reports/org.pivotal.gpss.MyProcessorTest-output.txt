@@ -1,0 +1,1 @@
+[main] INFO org.pivotal.gpss.MyProcessor - null initialize component with propertiesPropertyDescriptor[GPSSServer] PropertyDescriptor[Greenplum: master host] PropertyDescriptor[Greenplum: table to ingest]
