@@ -5,6 +5,13 @@ import java.util.concurrent.TimeUnit;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import java.util.ArrayList;
+import org.apache.nifi.logging.ComponentLog;
+import java.io.StringWriter;
+import java.io.PrintWriter;
+import io.grpc.netty.NettyChannelBuilder;
+import io.netty.handler.ssl.util.*;
+import io.grpc.netty.NegotiationType;
+
 
 
 public class GpssWrapper {
@@ -20,18 +27,24 @@ public class GpssWrapper {
     private String dbName;
     private String schemaName;
     private String tableName;
+    private ComponentLog logger;
 
-    public GpssWrapper(String gpssHost, int gpssPort, String gpMasterHost, Integer gpMasterPort, String gpRoleName, String gpPasswd, String dbName, String tableName, String schemaName)    {
+    public GpssWrapper(String gpssHost, int gpssPort, String gpMasterHost, Integer gpMasterPort, String gpRoleName, String gpPasswd, String dbName, String tableName, String schemaName, ComponentLog logger)    {
 
         this.gpssHost = gpssHost;
         this.gpssPort = gpssPort;
         this.gpMasterHost = gpMasterHost;
         this.gpMasterPort = gpMasterPort;
         this.gpRoleName =  gpRoleName;
-        this.gpPasswd = gpPasswd;
+        if (gpPasswd == null)  {
+            this.gpPasswd = "";
+       } else {
+            this.gpPasswd = gpPasswd;
+        }
         this.dbName = dbName;
         this.tableName = tableName;
         this.schemaName = schemaName;
+        this.logger = logger;
 
     }
 
@@ -40,11 +53,12 @@ public class GpssWrapper {
 
         ManagedChannel channel = null;
 
+        logger.info("connecting to grpc server:" + gpssHost);
 
         try {
             // connect to GPSS gRPC service instance; create a channel and a blocking stub
-            channel = ManagedChannelBuilder.forAddress(gpssHost, gpssPort)
-                    .usePlaintext()
+            channel = NettyChannelBuilder.forAddress(gpssHost, gpssPort)
+                    .negotiationType(NegotiationType.PLAINTEXT) // TODO: gRPC encryption
                     .build();
             bStub = GpssGrpc.newBlockingStub(channel);
 
@@ -54,6 +68,10 @@ public class GpssWrapper {
             //channel.shutdown().awaitTermination(7, TimeUnit.SECONDS);
 
         } catch (Exception e) {
+            StringWriter errors = new StringWriter();
+            e.printStackTrace(new PrintWriter(errors));
+
+            logger.error("failed to connect to the grpc serverxxx: " +  errors.toString());
 
         }
 
@@ -62,19 +80,29 @@ public class GpssWrapper {
     public void connectToGreenplum() {
 
 
-
+        logger.info("connecting to greenplum host: " + gpMasterHost + " as user: " + gpRoleName + " to database: " + dbName);
         // create a connect request builder
-        ConnectRequest connReq = ConnectRequest.newBuilder()
-                .setHost(gpMasterHost)
-                .setPort(gpMasterPort)
-                .setUsername(gpRoleName)
-                .setPassword(gpPasswd)
-                .setDB(dbName)
-                .setUseSSL(false)
-                .build();
+        try {
+            ConnectRequest connReq = ConnectRequest.newBuilder()
+                    .setHost(gpMasterHost)
+                    .setPort(gpMasterPort)
+                    .setUsername(gpRoleName)
+                    .setPassword(gpPasswd)
+                    .setDB(dbName)
+                    .setUseSSL(false)
+                    .build();
 
-        // use the blocking stub to call the Connect service
-        mSession = bStub.connect(connReq);
+            // use the blocking stub to call the Connect service
+            mSession = bStub.connect(connReq);
+        } catch (Exception e) {
+            StringWriter errors = new StringWriter();
+            e.printStackTrace(new PrintWriter(errors));
+
+            logger.error("failed to connect to the grpc serverxxx: " +  errors.toString());
+
+        }
+
+
 
         // (placeholder) do greenplum stuff here
 
@@ -84,6 +112,7 @@ public class GpssWrapper {
     }
 
     public void prepareForWriting()    {
+        logger.info("prepare for writing");
         Integer errLimit = 25;
         Integer errPct = 25;
         // create an insert option builder
@@ -108,42 +137,66 @@ public class GpssWrapper {
 
     }
 
-    public void writeIn() {
+    public void writeIn(ArrayList<String> rowsItems) {
+        logger.info("writing");
         // create an array of rows
-        ArrayList<RowData> rows = new ArrayList<>();
-        for (int row = 0; row < 1; row++) {
-            // create a row builder
-            api.Row.Builder builder = api.Row.newBuilder();
+        try {
+            ArrayList<RowData> rows = new ArrayList<>();
+            for (int row = 0; row < rowsItems.size(); row++) {
 
-            // create builders for each column, in order, and set values - text, int, text
-            api.DBValue.Builder colbuilder1 = api.DBValue.newBuilder();
-            colbuilder1.setStringValue("xxx");
-            builder.addColumns(colbuilder1.build());
+                logger.info("looping inserting: " + rowsItems.get(row));
+                // create a row builder
+                api.Row.Builder builder = api.Row.newBuilder();
 
-            // build the row
-            RowData.Builder rowbuilder = RowData.newBuilder().setData(builder.build().toByteString());
+                // create builders for each column, in order, and set values - text, int, text
+                api.DBValue.Builder colbuilder1 = api.DBValue.newBuilder();
+                colbuilder1.setStringValue(rowsItems.get(row));
+                builder.addColumns(colbuilder1.build());
 
-            // add the row
-            rows.add(rowbuilder.build());
+                // build the row
+                RowData.Builder rowbuilder = RowData.newBuilder().setData(builder.build().toByteString());
+
+                // add the row
+                rows.add(rowbuilder.build());
+            }
+
+            // create a write request builder
+            WriteRequest wReq = WriteRequest.newBuilder()
+                    .setSession(mSession)
+                    .addAllRows(rows)
+                    .build();
+
+            // use the blocking stub to call the Write service; it returns nothing
+            bStub.write(wReq);
+
+            this.close();
+        } catch (Exception e) {
+            StringWriter errors = new StringWriter();
+            e.printStackTrace(new PrintWriter(errors));
+
+            logger.error("failed to connect to the grpc serverxxx: " +  errors.toString());
+
         }
 
-        // create a write request builder
-        WriteRequest wReq = WriteRequest.newBuilder()
-                .setSession(mSession)
-                .addAllRows(rows)
-                .build();
 
-        // use the blocking stub to call the Write service; it returns nothing
-        bStub.write(wReq);
 
     }
 
-    public void close()   {
+    private void close()   {
         // create a close request builder
         TransferStats tStats = null;
         CloseRequest cReq = CloseRequest.newBuilder()
                 .setSession(mSession)
                 .build();
+
+        bStub.close(cReq);
+    }
+
+    public void disconnectToGreenplum()    {
+
+        bStub.disconnect(mSession);
+
+
     }
 
 

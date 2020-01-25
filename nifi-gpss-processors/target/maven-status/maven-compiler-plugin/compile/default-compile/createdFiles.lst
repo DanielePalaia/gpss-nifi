@@ -8,6 +8,7 @@ api/GpssGrpc$GpssBlockingStub.class
 api/GpssGrpc$2.class
 api/ListSchemaRequest$Builder.class
 api/WriteRequest$1.class
+org/pivotal/gpss/MyProcessor$1.class
 api/GpssGrpc$GpssFileDescriptorSupplier.class
 org/pivotal/gpss/MyProcessor.class
 api/ColumnInfo$Builder.class

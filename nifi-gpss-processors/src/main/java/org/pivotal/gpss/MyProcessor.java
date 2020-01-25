@@ -34,6 +34,9 @@ import org.apache.nifi.processor.ProcessorInitializationContext;
 import org.apache.nifi.processor.Relationship;
 import org.apache.nifi.processor.util.StandardValidators;
 import org.apache.nifi.logging.ComponentLog;
+import org.apache.nifi.processor.io.InputStreamCallback;
+import java.io.*;
+import org.apache.commons.io.IOUtils;
 
 
 import com.google.common.collect.ImmutableList;
@@ -56,6 +59,8 @@ import java.util.Set;
 public class MyProcessor extends AbstractProcessor {
 
     GpssWrapper gpssClient;
+    ArrayList<String> batches = new ArrayList<String>();
+    private int numberOfItem;
 
     public static final PropertyDescriptor GPSSServerProperty = new PropertyDescriptor
             .Builder().name("GPSSServer")
@@ -91,7 +96,7 @@ public class MyProcessor extends AbstractProcessor {
 
     public static final PropertyDescriptor GreenplumDatabaseProperty = new PropertyDescriptor
             .Builder().name("DatabaseName")
-            .displayName("Greenplum: atabase to use")
+            .displayName("Greenplum: database to use")
             .description("Greenplum database to use")
             .required(true)
             .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
@@ -105,11 +110,12 @@ public class MyProcessor extends AbstractProcessor {
             .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
             .build();
 
+
     public static final PropertyDescriptor GreenplumPasswordProperty = new PropertyDescriptor
-            .Builder().name("DatabaseName")
+            .Builder().name("GreenplumPassword")
             .displayName("Greenplum: password")
             .description("Greenplum password")
-            .required(true)
+            //.required(true)
             .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
             .build();
 
@@ -129,10 +135,28 @@ public class MyProcessor extends AbstractProcessor {
             .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
             .build();
 
+    public static final PropertyDescriptor NumberOfItemProperty = new PropertyDescriptor
+            .Builder().name("NumberOfItems")
+            .displayName("Number of items to batch")
+            .description("Number of items to batch")
+            .required(true)
+            .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
+            .build();
+
+    public static final PropertyDescriptor TimeoutProperty = new PropertyDescriptor
+            .Builder().name("Timeout")
+            .displayName("timeout before batching")
+            .description("timeout before batching")
+            .required(true)
+            .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
+            .build();
+
     public static final Relationship MY_RELATIONSHIP = new Relationship.Builder()
             .name("SUCCESS")
             .description("Example relationship")
             .build();
+
+
 
     private List<PropertyDescriptor> descriptors;
 
@@ -151,6 +175,8 @@ public class MyProcessor extends AbstractProcessor {
         descriptors.add(GreenplumDatabaseProperty);
         descriptors.add(GreenplumUsernameProperty);
         descriptors.add(GreenplumPasswordProperty);
+        descriptors.add(NumberOfItemProperty);
+        descriptors.add(TimeoutProperty);
 
         this.descriptors = Collections.unmodifiableList(descriptors);
 
@@ -185,14 +211,10 @@ public class MyProcessor extends AbstractProcessor {
         String GreenplumUsername = context.getProperty(GreenplumUsernameProperty).getValue();
         String GreenplumPassword = context.getProperty(GreenplumPasswordProperty).getValue();
         String GreenplumDatabase = context.getProperty(GreenplumDatabaseProperty).getValue();
+        numberOfItem = Integer.parseInt(context.getProperty(NumberOfItemProperty).getValue());
 
-        gpssClient = new GpssWrapper(GpssServer,GpssPort, GreenplumMasterHost,GreenplumMasterPort, GreenplumUsername, GreenplumPassword, GreenplumDatabase, GreenplumTable, GreenplumSchema);
+        gpssClient = new GpssWrapper(GpssServer,GpssPort, GreenplumMasterHost,GreenplumMasterPort, GreenplumUsername, GreenplumPassword, GreenplumDatabase, GreenplumTable, GreenplumSchema, logger);
         gpssClient.connectToGrpc();
-
-        logger.info("initialize component with properties" + GpssServer + " " + GreenplumMasterHost + " " + GreenplumTable);
-
-
-
 
     }
 
@@ -205,6 +227,37 @@ public class MyProcessor extends AbstractProcessor {
         if ( flowFile == null ) {
             return;
         }
+
+        session.read(flowFile, new InputStreamCallback() {
+            @Override
+            public void process(InputStream in) throws IOException {
+                try{
+                    String json = IOUtils.toString(in);
+                    logger.info("Received json:" + json);
+                    /*String result = JsonPath.read(json, "$.hello");*/
+                    String[] parts = json.split("\n");
+                    for(String line: parts)    {
+
+                        batches.add(line);
+                    }
+
+                    if(batches.size() >= numberOfItem)     {
+                        gpssClient.connectToGreenplum();
+                        gpssClient.prepareForWriting();
+                        gpssClient.writeIn(batches);
+                        gpssClient.disconnectToGreenplum();
+                        batches.clear();
+                    }
+
+                }catch(Exception e){
+                    StringWriter errors = new StringWriter();
+                    e.printStackTrace(new PrintWriter(errors));
+
+                    logger.error("failed to connect to the grpc serverxxx: " +  errors.toString());
+
+                }
+            }
+        });
 
         session.transfer(flowFile, MY_RELATIONSHIP);
         // TODO implement
