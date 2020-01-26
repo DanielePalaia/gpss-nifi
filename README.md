@@ -90,12 +90,12 @@ Once copied restart nifi
 
 ![Screenshot](./pics/ten.png)
 
-5. **Start the two processors** </br> 
+6. **Start the two processors** </br> 
 
 ![Screenshot](./pics/twenty.png)
 
 
-4. **Put a populated json file inside the test directory you specified in the Get file </br>  
+7. **Put a populated json file inside the test directory you specified in the Get file ** </br>  
 
 ![Screenshot](./pics/twelve.png)
 
