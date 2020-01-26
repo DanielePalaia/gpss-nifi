@@ -1,7 +1,7 @@
 # Summary
 This software is intended to be a simple (non production ready) processor for apache nifi server, using Greenplum Streaming Service functionalities. </br>
 It is written in Java and it uses the following technologies: Apache nifi, java, GRPC, Greenplum GPSS. </br>
-At the moment it is just supporting json format. The processor is receiving .json entries from a nifi relashion and ingest a Greenplum table.</br> 
+At the moment it is just supporting json format. The processor is receiving .json entries from a nifi relation and ingest in a Greenplum table.</br> 
 
 The following reading can help you to better understand the software:
 
@@ -25,10 +25,10 @@ These are the steps to run the software:
    
 2. **Create the Greenplum table to be ingested**
 
-      The table can be generic with any number of coloumns and data types. The important thing is that the input to ingest         will be coherent with the table definition. Let's try this table as example:
+      Create a table with a json data field (called data)
    
       ```
-      test=# create table test(id varchar (data json);
+      test=# create table test(data json);
       ```
    
 3. **Run a gpss server with the right configuration (ex):**
