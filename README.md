@@ -101,4 +101,20 @@ Once copied restart nifi
 </br> 
 ![Screenshot](./pics/twelve.png)
 
+7. **Have a look to the application logs of nifi and see the greenplum tables populated** </br>
 
+![Screenshot](./pics/twentyone.png)
+![Screenshot](./pics/twentytw.png)
+
+
+```
+test=# select * from test;
+                       data                        
+---------------------------------------------------
+ {"name": "John", "age": "31", "city": "New York"}
+ {"name": "John", "age": "31", "city": "New York"}
+ {"name": "John", "age": "31", "city": "New York"}
+ {"name": "John", "age": "31", "city": "New York"}
+ {"name": "John", "age": "31", "city": "New York"}
+(5 rows)
+```
