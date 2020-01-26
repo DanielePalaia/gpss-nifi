@@ -56,7 +56,7 @@ These are the steps to run the software:
   
 ## Deploy and test the nifi processor
 
-1. **Copy the .nar file** </br>
+1. **Copy the .nar file to the nifi lib directory** </br>
 
 The nifi processor is written in Java. Maven will automatically create a .nar file to be deployed in nifi.
 Copy the .nar file in ./nifi-gpss-nar/target/nifi-gpss-nar-1.0-SNAPSHOT.nar inside your nifi lib directory
