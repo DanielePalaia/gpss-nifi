@@ -74,13 +74,26 @@ Once copied restart nifi
 ![Screenshot](./pics/five.png)
 
 
-2. **Setting property of the processor**  </br>   
+4. **Setting property of the processor**  </br>   
 
 ![Screenshot](./pics/six.png)
     
 
-3. **Add a GetFile processor as a tester** </br>  
+5. **Add a GetFile processor as a tester** </br> 
+
+![Screenshot](./pics/seven.png)
+![Screenshot](./pics/eight.png)
+
+5. **Create a relashionship** </br> 
+
+![Screenshot](./pics/ten.png)
+
+5. **Start the two processors** </br> 
+![Screenshot](./pics/eleven.png)
 
 
+4. **Put a populated json file inside the test directory you specified in the Get file </br>  
 
-4. **See the greenplum table populated </br>  
+![Screenshot](./pics/twelve.png)
+
+
