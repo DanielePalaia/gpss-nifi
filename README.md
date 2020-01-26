@@ -40,7 +40,7 @@ These are the steps to run the software:
       {
          "ListenAddress": {
             "Host": "",
-            "Port": 8088,
+            "Port": 8085,
             "SSL": false
          },
          "Gpfdist": {
