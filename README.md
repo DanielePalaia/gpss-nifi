@@ -52,7 +52,7 @@ These are the steps to run the software:
 
 4. **download, install and start nifi**
 
-![Screenshot](./pics/fourth)
+![Screenshot](./pics/fourth.png)
   
 ## Deploy and test the nifi processor
 
