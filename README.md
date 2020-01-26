@@ -130,7 +130,7 @@ test=# select * from test;
 
 The software is based on maven. to build the project you can just:</br>  
 
-mvn build</br>  
+**mvn build**</br>  
 
 in the main directory.</br>  
 This will create a .nar file inside ./nifi-gpss-nar/target that you can deploy on nifi.</br>  
