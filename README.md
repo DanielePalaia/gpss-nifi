@@ -78,8 +78,10 @@ Once copied restart nifi
 4. **Setting property of the processor**  </br>   
 
 ![Screenshot](./pics/six.png)
-    
 
+NumberOfItemsToBatch specify if the components need to batch items before ingesting. In this case is 5 so the processor needs to receive at least 5 json entries before ingesting.</br>  
+For pure streaming way you can set it to 1.
+    
 5. **Add a GetFile processor as a tester** </br> 
 
 ![Screenshot](./pics/seven.png)
