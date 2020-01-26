@@ -97,6 +97,8 @@ For pure streaming way you can set it to 1.
 
 ![Screenshot](./pics/twenty.png)
 
+You can stop and restart the processor whenever you want.
+
 
 7. **Put a populated json file inside the test directory you specified in the Get file** </br>  
 
