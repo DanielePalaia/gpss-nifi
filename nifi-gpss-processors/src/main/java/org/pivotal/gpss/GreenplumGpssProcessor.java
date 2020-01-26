@@ -58,7 +58,7 @@ import java.util.Set;
 @WritesAttributes({@WritesAttribute(attribute="", description="")})
 public class GreenplumGpssProcessor extends AbstractProcessor {
 
-    GpssWrapper gpssClient;
+    GpssWrapper gpssClient = null;
     ArrayList<String> batches = new ArrayList<String>();
     private int numberOfItem;
 
@@ -213,10 +213,8 @@ public class GreenplumGpssProcessor extends AbstractProcessor {
         String GreenplumDatabase = context.getProperty(GreenplumDatabaseProperty).getValue();
         numberOfItem = Integer.parseInt(context.getProperty(NumberOfItemProperty).getValue());
 
-        if(gpssClient != null) {
-            gpssClient = new GpssWrapper(GpssServer, GpssPort, GreenplumMasterHost, GreenplumMasterPort, GreenplumUsername, GreenplumPassword, GreenplumDatabase, GreenplumTable, GreenplumSchema, logger);
-            gpssClient.connectToGrpc();
-        }
+        gpssClient = new GpssWrapper(GpssServer, GpssPort, GreenplumMasterHost, GreenplumMasterPort, GreenplumUsername, GreenplumPassword, GreenplumDatabase, GreenplumTable, GreenplumSchema, logger);
+        gpssClient.connectToGrpc();
 
     }
 
