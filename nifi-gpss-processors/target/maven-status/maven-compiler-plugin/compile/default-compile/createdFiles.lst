@@ -8,9 +8,7 @@ api/GpssGrpc$GpssBlockingStub.class
 api/GpssGrpc$2.class
 api/ListSchemaRequest$Builder.class
 api/WriteRequest$1.class
-org/pivotal/gpss/MyProcessor$1.class
 api/GpssGrpc$GpssFileDescriptorSupplier.class
-org/pivotal/gpss/MyProcessor.class
 api/ColumnInfo$Builder.class
 api/ListSchemaRequestOrBuilder.class
 api/ColumnInfo.class
@@ -44,6 +42,7 @@ api/Columns.class
 api/DBValue$Builder.class
 api/UpdateOption$Builder.class
 api/ColumnInfo$1.class
+org/pivotal/gpss/GreenplumGpssProcessor.class
 api/Operation$1.class
 api/GpssGrpc$1.class
 api/RowData$1.class
@@ -54,6 +53,7 @@ api/DBValueOrBuilder.class
 api/Schema.class
 api/Tables$Builder.class
 api/SchemasOrBuilder.class
+org/pivotal/gpss/GreenplumGpssProcessor$1.class
 api/Schemas$Builder.class
 api/ColumnsOrBuilder.class
 api/ListTableRequest$1.class
