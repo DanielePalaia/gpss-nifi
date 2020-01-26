@@ -213,8 +213,10 @@ public class GreenplumGpssProcessor extends AbstractProcessor {
         String GreenplumDatabase = context.getProperty(GreenplumDatabaseProperty).getValue();
         numberOfItem = Integer.parseInt(context.getProperty(NumberOfItemProperty).getValue());
 
-        gpssClient = new GpssWrapper(GpssServer, GpssPort, GreenplumMasterHost, GreenplumMasterPort, GreenplumUsername, GreenplumPassword, GreenplumDatabase, GreenplumTable, GreenplumSchema, logger);
-        gpssClient.connectToGrpc();
+        if (gpssClient == null) {
+            gpssClient = new GpssWrapper(GpssServer, GpssPort, GreenplumMasterHost, GreenplumMasterPort, GreenplumUsername, GreenplumPassword, GreenplumDatabase, GreenplumTable, GreenplumSchema, logger);
+            gpssClient.connectToGrpc();
+        }
 
     }
 
