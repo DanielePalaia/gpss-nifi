@@ -104,7 +104,7 @@ Once copied restart nifi
 7. **Have a look to the application logs of nifi and see the greenplum tables populated** </br>
 
 ![Screenshot](./pics/twentyone.png)
-![Screenshot](./pics/twentytw.png)
+![Screenshot](./pics/twentytwo.png)
 
 
 ```
