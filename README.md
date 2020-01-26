@@ -95,7 +95,7 @@ Once copied restart nifi
 ![Screenshot](./pics/twenty.png)
 
 
-7. **Put a populated json file inside the test directory you specified in the Get file ** </br>  
+7. **Put a populated json file inside the test directory you specified in the Get file** </br>  
 
 ![Screenshot](./pics/twelve.png)
 
