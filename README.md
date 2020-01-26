@@ -62,6 +62,7 @@ The nifi processor is written in Java. Maven will automatically create a .nar fi
 Copy the .nar file in ./nifi-gpss-nar/target/nifi-gpss-nar-1.0-SNAPSHOT.nar inside your nifi lib directory
 
 ![Screenshot](./pics/second.png)
+</br> 
 ![Screenshot](./pics/third.png)
 
 2. **restart nifi** </br>
@@ -82,6 +83,7 @@ Once copied restart nifi
 5. **Add a GetFile processor as a tester** </br> 
 
 ![Screenshot](./pics/seven.png)
+</br> 
 ![Screenshot](./pics/eight.png)
 
 5. **Create a relashionship** </br> 
@@ -89,7 +91,8 @@ Once copied restart nifi
 ![Screenshot](./pics/ten.png)
 
 5. **Start the two processors** </br> 
-![Screenshot](./pics/eleven.png)
+
+![Screenshot](./pics/twenty.png)
 
 
 4. **Put a populated json file inside the test directory you specified in the Get file </br>  
