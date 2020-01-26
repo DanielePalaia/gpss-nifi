@@ -125,3 +125,13 @@ test=# select * from test;
  {"name": "John", "age": "31", "city": "New York"}
 (5 rows)
 ```
+
+## Build and development
+
+The software is based on maven. to build the project you can just:</br>  
+
+mvn build</br>  
+
+in the main directory.</br>  
+This will create a .nar file inside ./nifi-gpss-nar/target that you can deploy on nifi.</br>  
+
