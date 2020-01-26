@@ -1,7 +1,7 @@
 # Summary
 This software is intended to be a simple (non production ready) processor for apache nifi server, using Greenplum Streaming Service functionalities. </br>
 It is written in Java and it uses the following technologies: Apache nifi, java, GRPC, Greenplum GPSS. </br>
-At the moment it is just supportin .json. The processor is receiving .json entries from a nifi relashion and ingest a Greenplum table.</br> 
+At the moment it is just supporting json format. The processor is receiving .json entries from a nifi relashion and ingest a Greenplum table.</br> 
 
 The following reading can help you to better understand the software:
 
