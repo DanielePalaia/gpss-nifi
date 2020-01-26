@@ -67,16 +67,20 @@ Copy the .nar file in ./nifi-gpss-nar/target/nifi-gpss-nar-1.0-SNAPSHOT.nar insi
 2. **restart nifi** </br>
 
 Once copied restart nifi
-![Screenshot](./pics/first.png)
-
 
 
 3. **insert the processor in the nifi UI** </br>
 
+![Screenshot](./pics/five.png)
+
 
 2. **Setting property of the processor**  </br>   
+
+![Screenshot](./pics/six.png)
     
 
-3. **Add a tester** </br>  
+3. **Add a GetFile processor as a tester** </br>  
+
+
 
 4. **See the greenplum table populated </br>  
