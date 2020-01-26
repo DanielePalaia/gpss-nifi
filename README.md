@@ -97,6 +97,8 @@ Once copied restart nifi
 
 7. **Put a populated json file inside the test directory you specified in the Get file** </br>  
 
+You can copy several one line files or you can submit a file with a number of json (one every line).</br>  
+
 ![Screenshot](./pics/eleven.png)
 </br> 
 ![Screenshot](./pics/twelve.png)
